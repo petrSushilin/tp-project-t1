@@ -8,31 +8,29 @@ import java.util.UUID;
 @Table(name = "tasks")
 public class Task {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private UUID id;
+    private long id;
     private String title;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    private long userId;
 
     public Task() {
 
     }
 
-    public Task(UUID id, String title, String description, User user) {
+    public Task(long id, String title, String description, long userId) {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.user = user;
+        this.userId = userId;
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -52,11 +50,21 @@ public class Task {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Task{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", userId=" + userId +
+                '}';
     }
 }

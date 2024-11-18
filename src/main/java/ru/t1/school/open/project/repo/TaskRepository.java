@@ -7,5 +7,5 @@ import ru.t1.school.open.project.entity.Task;
 import java.util.UUID;
 
 @Repository
-public interface TaskRepository extends JpaRepository<Task, UUID> {
+public interface TaskRepository extends JpaRepository<Task, Long> {
 }

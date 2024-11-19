@@ -1,12 +1,12 @@
-package ru.t1.school.open.project.service;
+package ru.t1.school.open.project.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import ru.t1.school.open.project.aspect.annotation.Changeable;
-import ru.t1.school.open.project.aspect.annotation.Existing;
-import ru.t1.school.open.project.aspect.annotation.Validatable;
-import ru.t1.school.open.project.entity.Task;
+import ru.t1.school.open.project.application.aspect.annotation.Changeable;
+import ru.t1.school.open.project.application.aspect.annotation.Existing;
+import ru.t1.school.open.project.application.aspect.annotation.Logging;
+import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.repo.TaskRepository;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    @Validatable
+    @Logging
     public Task create(Task task) {
         return taskRepository.save(task);
     }
@@ -36,7 +36,6 @@ public class TaskService {
 
     @Existing
     @Changeable
-    @Validatable
     public Task change(@NonNull String id, Task task) {
         task.setId(Long.parseLong(id));
         return taskRepository.save(task);

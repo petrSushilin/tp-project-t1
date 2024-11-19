@@ -1,4 +1,4 @@
-package ru.t1.school.open.project.aspect;
+package ru.t1.school.open.project.application.aspect;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 public class RepoExistingAspect {
     private static final Logger logger = LoggerFactory.getLogger(RepoExistingAspect.class);
 
-    @Pointcut("@annotation(ru.t1.school.open.project.aspect.annotation.Existing)")
+    @Pointcut("@annotation(ru.t1.school.open.project.application.aspect.annotation.Existing)")
     public void existingMethods() {
     }
 

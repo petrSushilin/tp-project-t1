@@ -1,13 +1,11 @@
-package ru.t1.school.open.project.controller;
+package ru.t1.school.open.project.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.t1.school.open.project.entity.Task;
-import ru.t1.school.open.project.service.TaskService;
-
-import java.util.List;
+import ru.t1.school.open.project.domain.entity.Task;
+import ru.t1.school.open.project.application.service.TaskService;
 
 @RestController
 @RequestMapping("/api/v1/tasks")

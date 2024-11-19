@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.t1.school.open.project.entity.Task;
+import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.global.exception.RecordNotFoundException;
 import ru.t1.school.open.project.global.exception.TaskValidationException;
 import ru.t1.school.open.project.repo.TaskRepository;
-import ru.t1.school.open.project.service.TaskService;
+import ru.t1.school.open.project.application.service.TaskService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

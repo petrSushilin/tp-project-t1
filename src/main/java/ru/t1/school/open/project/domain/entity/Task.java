@@ -1,4 +1,4 @@
-package ru.t1.school.open.project.entity;
+package ru.t1.school.open.project.domain.entity;
 
 import jakarta.persistence.*;
 

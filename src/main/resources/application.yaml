@@ -9,3 +9,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: password
+logging:
+  level:
+#    root: info
+    ru.t1.school.open.project: info

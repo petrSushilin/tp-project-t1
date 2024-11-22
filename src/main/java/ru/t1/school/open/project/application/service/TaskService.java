@@ -3,13 +3,14 @@ package ru.t1.school.open.project.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import ru.t1.school.open.project.application.aspect.annotation.Changeable;
+import ru.t1.school.open.project.api.dto.TaskDto;
 import ru.t1.school.open.project.application.aspect.annotation.Existing;
 import ru.t1.school.open.project.application.aspect.annotation.Logging;
-import ru.t1.school.open.project.domain.entity.Task;
+import ru.t1.school.open.project.application.mapper.TaskMapper;
 import ru.t1.school.open.project.repo.TaskRepository;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 public class TaskService {
@@ -21,24 +22,40 @@ public class TaskService {
     }
 
     @Logging
-    public Task create(Task task) {
-        return taskRepository.save(task);
+    public TaskDto create(TaskDto taskDto) {
+        return Stream.of(taskDto)
+                .map(TaskMapper::toEntity)
+                .map(taskRepository::save)
+                .map(TaskMapper::toDto)
+                .findFirst()
+                .orElseThrow();
     }
 
     @Existing
-    public Task getById(@NonNull String id) {
-        return taskRepository.findById(Long.parseLong(id)).orElseThrow();
+    public TaskDto getById(@NonNull String id) {
+        return taskRepository
+                .findById(Long.parseLong(id))
+                .map(TaskMapper::toDto)
+                .orElseThrow();
     }
 
-    public List<Task> getAll() {
-        return taskRepository.findAll();
+    public List<TaskDto> getAll() {
+        return taskRepository
+                .findAll()
+                .stream()
+                .map(TaskMapper::toDto)
+                .toList();
     }
 
     @Existing
-    @Changeable
-    public Task change(@NonNull String id, Task task) {
-        task.setId(Long.parseLong(id));
-        return taskRepository.save(task);
+    public TaskDto change(@NonNull String id, TaskDto taskDto) {
+        return Stream.of(taskDto)
+                .map(TaskMapper::toEntity)
+                .peek(task -> task.setId(Long.parseLong(id)))
+                .map(taskRepository::save)
+                .map(TaskMapper::toDto)
+                .findFirst()
+                .orElseThrow();
     }
 
     @Existing

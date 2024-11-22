@@ -4,8 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.t1.school.open.project.api.dto.TaskDto;
 import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.application.service.TaskService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
@@ -18,39 +21,30 @@ public class TaskController {
     }
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody Task task) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.create(task));
+    @ResponseStatus(HttpStatus.CREATED)
+    public TaskDto create(@RequestBody TaskDto task) {
+        return taskService.create(task);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getById(@PathVariable String id) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.getById(id));
+    @ResponseStatus(HttpStatus.OK)
+    public TaskDto getById(@PathVariable String id) {
+        return taskService.getById(id);
     }
 
     @GetMapping()
-    public ResponseEntity<?> getAll() {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.getAll());
+    public List<TaskDto> getAll() {
+        return taskService.getAll();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> change(@PathVariable String id, @RequestBody Task task) {
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(taskService.change(id, task));
+    public TaskDto change(@PathVariable String id, @RequestBody TaskDto task) {
+        return taskService.change(id, task);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> remove(@PathVariable String id) {
+    public String remove(@PathVariable String id) {
         taskService.remove(id);
-
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body("Task with id " + id + " removed.");
+        return "Task with id " + id + " removed.";
     }
 }

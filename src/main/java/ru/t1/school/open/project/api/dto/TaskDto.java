@@ -1,4 +1,6 @@
 package ru.t1.school.open.project.api.dto;
 
-public record TaskDto (long id, String title, String description, long userId) {
+import ru.t1.school.open.project.domain.enums.TaskStatus;
+
+public record TaskDto (long id, String title, String description, TaskStatus status, long userId) {
 }

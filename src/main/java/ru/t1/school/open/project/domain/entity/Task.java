@@ -1,8 +1,8 @@
 package ru.t1.school.open.project.domain.entity;
 
 import jakarta.persistence.*;
-
-import java.util.UUID;
+import jakarta.validation.constraints.NotNull;
+import ru.t1.school.open.project.domain.enums.TaskStatus;
 
 @Entity
 @Table(name = "tasks")
@@ -11,18 +11,32 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
     private long id;
+    @NotNull
     private String title;
+    @NotNull
     private String description;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TaskStatus status;
+    @NotNull
     private long userId;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.status == null) {
+            this.status = TaskStatus.CREATED;
+        }
+    }
 
     public Task() {
 
     }
 
-    public Task(long id, String title, String description, long userId) {
+    public Task(long id, String title, String description, TaskStatus status, long userId) {
         this.id = id;
         this.title = title;
         this.description = description;
+        this.status = status;
         this.userId = userId;
     }
 
@@ -50,6 +64,14 @@ public class Task {
         this.description = description;
     }
 
+    public TaskStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
+
     public long getUserId() {
         return userId;
     }
@@ -64,6 +86,7 @@ public class Task {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", status=" + status +
                 ", userId=" + userId +
                 '}';
     }

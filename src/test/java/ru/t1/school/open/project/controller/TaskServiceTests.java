@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.t1.school.open.project.api.dto.TaskDto;
-import ru.t1.school.open.project.application.mapper.TaskMapper;
+import ru.t1.school.open.project.application.util.mapper.TaskMapper;
 import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.domain.enums.TaskStatus;
 import ru.t1.school.open.project.global.exception.RecordNotFoundException;
@@ -50,7 +50,6 @@ public class TaskServiceTests {
 
         assertNotNull(changedTask);
         assertEquals("Task#NewTitle", changedTask.title());
-        System.out.println(changedTask);
         assertEquals(2L, changedTask.userId());
 
         TaskDto taskFromDb = taskService.getById(String.valueOf(existingTask.id()));

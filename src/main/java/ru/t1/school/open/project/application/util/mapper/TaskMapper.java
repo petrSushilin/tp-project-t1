@@ -1,4 +1,4 @@
-package ru.t1.school.open.project.application.mapper;
+package ru.t1.school.open.project.application.util.mapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ru.t1.school.open.project.api.dto.TaskDto;

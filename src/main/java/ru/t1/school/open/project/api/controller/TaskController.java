@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.t1.school.open.project.api.dto.TaskDto;
+import ru.t1.school.open.project.application.kafka.TaskKafkaConsumer;
+import ru.t1.school.open.project.application.kafka.TaskKafkaProducer;
 import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.application.service.TaskService;
 

@@ -3,15 +3,16 @@ package ru.t1.school.open.project.application.service;
 import org.springframework.stereotype.Service;
 import ru.t1.school.open.project.api.dto.TaskDto;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 @Service
 public class NotificationService {
-    private final Set<String> emailAddresses = Set.of("petrsushilin@mail.ru");
+    private final Set<String> emailAddresses = new HashSet<String>();
 
     void register(String email) {
-//        emailAddresses.add(email);
+        emailAddresses.add(email);
     }
 
     public void notification(List<TaskDto> tasks) {

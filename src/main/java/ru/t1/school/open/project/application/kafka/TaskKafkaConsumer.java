@@ -28,7 +28,6 @@ public class TaskKafkaConsumer {
                          Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                          @Header(KafkaHeaders.RECEIVED_KEY) String key) {
-        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa");
         try {
             logger.info("Received message from topic: {}. Received messages: {}", topic, massageList);
             notificationService.notification(massageList);

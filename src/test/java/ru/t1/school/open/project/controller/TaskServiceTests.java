@@ -13,6 +13,7 @@ import ru.t1.school.open.project.global.exception.RecordNotFoundException;
 import ru.t1.school.open.project.repo.TaskRepository;
 import ru.t1.school.open.project.application.service.TaskService;
 
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,6 +35,7 @@ public class TaskServiceTests {
 
         existingTask = taskService
                 .create(new TaskDto( 0L,"Task#InitialTitle", "Initial Description", null, 1L));
+
     }
 
     @Test

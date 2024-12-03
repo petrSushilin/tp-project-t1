@@ -5,14 +5,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.t1.school.open.project.api.dto.TaskDto;
+import ru.t1.school.open.project.application.util.mapper.TaskMapper;
 import ru.t1.school.open.project.domain.entity.Task;
+import ru.t1.school.open.project.domain.enums.TaskStatus;
 import ru.t1.school.open.project.global.exception.RecordNotFoundException;
-import ru.t1.school.open.project.global.exception.TaskValidationException;
 import ru.t1.school.open.project.repo.TaskRepository;
 import ru.t1.school.open.project.application.service.TaskService;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,90 +27,77 @@ public class TaskServiceTests {
     @Autowired
     private TaskRepository taskRepository;
 
-    private Task existingTask;
+    private TaskDto existingTask;
 
     @BeforeEach
     void setUp() {
         taskRepository.deleteAll();
 
-        existingTask = new Task();
-        existingTask.setTitle("Task#InitialTitle");
-        existingTask.setDescription("Initial Description");
-        existingTask.setUserId(1L);
+        existingTask = taskService
+                .create(new TaskDto( 0L,"Task#InitialTitle", "Initial Description", null, 1L));
 
-        Task savedTask = taskService.create(existingTask);
-
-        existingTask.setId(savedTask.getId());
     }
 
     @Test
     void testUpdateTask() {
         Task updatedTask = new Task();
-        updatedTask.setId(existingTask.getId());
+        updatedTask.setId(existingTask.id());
         updatedTask.setTitle("Task#NewTitle");
         updatedTask.setDescription("New Description");
+        updatedTask.setStatus(existingTask.status());
         updatedTask.setUserId(2L);
 
-        Task changedTask = taskService.change(String.valueOf(updatedTask.getId()), updatedTask);
+        TaskDto changedTask = taskService
+                .change(String.valueOf(updatedTask.getId()), TaskMapper.toDto(updatedTask));
 
         assertNotNull(changedTask);
-        assertEquals("Task#NewTitle", changedTask.getTitle());
-        assertTrue(changedTask.getDescription().contains("New Description") &&
-                changedTask.getDescription().contains("CHANGED at: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))));
-        assertEquals(2L, changedTask.getUserId());
+        assertEquals("Task#NewTitle", changedTask.title());
+        assertEquals(2L, changedTask.userId());
 
-        Task taskFromDb = taskService.getById(String.valueOf(existingTask.getId()));
-        assertEquals("Task#NewTitle", changedTask.getTitle());
-        assertTrue(changedTask.getDescription().contains("New Description") &&
-                changedTask.getDescription().contains("CHANGED at: " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"))));
-        assertEquals(2L, taskFromDb.getUserId());
+        TaskDto taskFromDb = taskService.getById(String.valueOf(existingTask.id()));
+        assertEquals("Task#NewTitle", changedTask.title());
+        assertEquals(2L, taskFromDb.userId());
     }
 
     @Test
     void testGetByIdOkay() {
-        Task taskFromDb = taskService.getById(String.valueOf(existingTask.getId()));
-        assertEquals("Task#InitialTitle", existingTask.getTitle());
-        assertTrue(existingTask.getDescription().contains("Initial Description"));
-        assertEquals(1L, taskFromDb.getUserId());
+        TaskDto taskFromDb = taskService.getById(String.valueOf(existingTask.id()));
+        assertEquals("Task#InitialTitle", existingTask.title());
+        assertTrue(existingTask.description().contains("Initial Description"));
+        assertEquals(1L, taskFromDb.userId());
     }
 
     @Test
     void testGetByIdThrow() {
         String invalidTaskId = "12387419121";
-
         RecordNotFoundException exception = assertThrows(RecordNotFoundException.class,
                 () -> taskService.getById(invalidTaskId)
         );
-
         assertTrue(exception.getMessage().contains("Record with id " + invalidTaskId + " not found"));
     }
 
     @Test
-    void testInvalidCreationEmptyDescription() {
-        Task newInvalidTask = new Task();
-        newInvalidTask.setTitle("Task#OkayTitle");
-        newInvalidTask.setDescription("");
-        newInvalidTask.setUserId(1L);
-
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> taskService.create(newInvalidTask));
-        assertTrue(exception.getMessage().contains("Description cannot be empty"));
+    void testCreation() {
+        TaskDto newTask = taskService.create(new TaskDto( 0L,"Task#NewTitle", "New Description", null, 2L));
+        assertEquals("Task#NewTitle", newTask.title());
+        assertEquals("New Description", newTask.description());
+        assertEquals(TaskStatus.CREATED, newTask.status());
+        assertEquals(2L, newTask.userId());
     }
 
     @Test
-    void testInvalidCreationIncorrectTitle() {
-        Task newInvalidTask = new Task();
-        newInvalidTask.setTitle("Tusk#IncorrectTitle");
-        newInvalidTask.setDescription("Initial Description");
-        newInvalidTask.setUserId(1L);
-
-        TaskValidationException exception = assertThrows(TaskValidationException.class, () -> taskService.create(newInvalidTask));
-        assertTrue(exception.getMessage().contains("Incorrect Task Title format."));
+    void testKafkaEventChangeStatus() {
+        Task currentTask = TaskMapper.toEntity(existingTask);
+        currentTask.setStatus(TaskStatus.IN_PROGRESS);
+        TaskDto changedTask = taskService.change(String.valueOf(existingTask.id()), TaskMapper.toDto(currentTask));
+        assertEquals(TaskStatus.IN_PROGRESS, changedTask.status());
     }
 
     @Test
-    void testInvalidCreationIncorrect() {
-        Object invalidEntityType = new Object();
-        TaskValidationException exception = assertThrows(TaskValidationException.class, () -> taskService.create(null));
-        assertTrue(exception.getMessage().contains("Task is required"));
+    void taskKafkaEventChangeDescription() {
+        Task currentTask = TaskMapper.toEntity(existingTask);
+        currentTask.setDescription("New Description");
+        TaskDto changedTask = taskService.change(String.valueOf(existingTask.id()), TaskMapper.toDto(currentTask));
+        assertEquals("New Description", changedTask.description());
     }
 }

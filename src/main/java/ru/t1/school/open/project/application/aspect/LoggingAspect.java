@@ -1,8 +1,11 @@
 package ru.t1.school.open.project.application.aspect;
 
 import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Around;
+
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
@@ -28,5 +31,21 @@ public class LoggingAspect {
     @AfterThrowing(pointcut = "loggingMethods()", throwing = "exception")
     public void logAfterThrowing(JoinPoint joinPoint, Throwable exception) {
         logger.error("Method {} threw an exception: {}", joinPoint.getSignature(), exception.getMessage());
+    }
+
+    @Around("loggingMethods()")
+    public Object loggingChange(ProceedingJoinPoint joinPoint) {
+        long startTime = System.currentTimeMillis();
+        Object result = null;
+
+        try {
+            result = joinPoint.proceed();
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
+        long endTime = System.currentTimeMillis();
+        logger.info("Task change executed in {} ms", endTime - startTime);
+        return result;
     }
 }

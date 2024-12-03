@@ -1,0 +1,21 @@
+#POST /api/v1/tasks HTTP/1.1
+#Host: localhost:8080
+#Content-Type: application/json
+#
+#{
+#  "title": "Sample Title",
+#  "description": "Sample description of the object",
+#  "userId": 12345
+#}
+
+PUT /api/v1/tasks/102 HTTP/1.1
+Host: localhost:8080
+Content-Type: application/json
+
+{
+  "id": 102,
+  "title": "Sample Title",
+  "description": "new description",
+  "status": "IN_PROGRESS",
+  "userId": 12345
+}

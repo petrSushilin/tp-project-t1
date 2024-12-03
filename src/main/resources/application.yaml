@@ -9,7 +9,27 @@ spring:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres
     password: password
+
 logging:
   level:
-#    root: info
     ru.t1.school.open.project: info
+
+t1:
+  root-path: ru.t1.school.open.project
+  kafka:
+    bootstrap:
+      servers: localhost:9092
+    topic:
+      task: tp_project_t1_tasks
+    producer:
+      enabled: true
+    consumer:
+      group-id: tp-project-t1
+      session:
+        timeout-ms: 3500
+      max-partition-fetch-bytes: 3000000
+      poll-timeout-ms: 3500
+      max-poll-records: 2
+      max-poll-interval-ms: 3500
+    listner:
+      poll-timeout: 10

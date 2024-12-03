@@ -55,23 +55,26 @@ public class TaskService {
     @Existing
     public TaskDto change(@NonNull String id, TaskDto taskDto) {
         return Stream.of(taskDto)
-                .map(TaskMapper::toEntity)
-                .peek(task -> task.setId(Long.parseLong(id)))
-                .map(this::changeSaved)
-                .map(TaskMapper::toDto)
+                .map(dto -> {
+                    Task entity = TaskMapper.toEntity(dto);
+                    entity.setId(Long.parseLong(id));
+                    Task savedEntity = this.changeSaved(entity);
+                    return TaskMapper.toDto(savedEntity);
+                })
                 .findFirst()
                 .orElseThrow();
     }
 
     private Task changeSaved(Task updatedTask) {
-        if(!taskRepository
-                .findById(updatedTask.getId())
-                .orElseThrow()
-                .getStatus()
-                .equals(updatedTask.getStatus())) {
+        Task savedTask = taskRepository.findById(updatedTask.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        if(!savedTask.getStatus().equals(updatedTask.getStatus())) {
+            savedTask = taskRepository.save(updatedTask);
             kafkaProducer.send(TaskMapper.toDto(updatedTask));
+        } else {
+            savedTask = taskRepository.save(updatedTask);
         }
-        return taskRepository.save(updatedTask);
+        return savedTask;
     }
 
     @Existing

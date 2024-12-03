@@ -22,7 +22,7 @@ public class MassageDeserializer<T> extends JsonDeserializer<T> {
             return super.deserialize(topic, data);
         } catch (Exception e) {
             logger.warn("Error deserializing message: {}", new String(data, StandardCharsets.UTF_8), e);
-            return null;
+            throw new RuntimeException("Error deserializing", e);
         }
     }
 
@@ -32,7 +32,7 @@ public class MassageDeserializer<T> extends JsonDeserializer<T> {
             return super.deserialize(topic, headers, data);
         } catch (Exception e) {
             logger.warn("Error deserializing message: {}", new String(data, StandardCharsets.UTF_8), e);
-            return null;
+            throw new RuntimeException("Error deserializing", e);
         }
     }
 }

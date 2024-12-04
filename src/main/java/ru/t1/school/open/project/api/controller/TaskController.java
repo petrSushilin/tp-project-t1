@@ -45,8 +45,8 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public String remove(@PathVariable String id) {
+    public boolean remove(@PathVariable String id) {
         taskService.remove(id);
-        return "Task with id " + id + " removed.";
+        return true;
     }
 }

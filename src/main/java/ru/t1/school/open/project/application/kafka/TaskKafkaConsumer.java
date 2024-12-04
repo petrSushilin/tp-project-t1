@@ -27,7 +27,7 @@ public class TaskKafkaConsumer {
     public void listener(@Payload List<TaskDto> massageList,
                          Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
-                         @Header(KafkaHeaders.RECEIVED_KEY) String key) {
+                         @Header(value = KafkaHeaders.RECEIVED_KEY, required = false) String key) {
         try {
             logger.info("Received message from topic: {}. Received messages: {}", topic, massageList);
             notificationService.notification(massageList);

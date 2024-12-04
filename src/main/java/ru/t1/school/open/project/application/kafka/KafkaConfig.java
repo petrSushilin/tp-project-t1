@@ -44,6 +44,8 @@ public class KafkaConfig {
     private String groupId;
     @Value("${t1.kafka.consumer.session.timeout-ms}")
     private String sessionTimeoutMs;
+    @Value("${t1.kafka.consumer.heartbeat-interval-ms}")
+    private String heartbeatIntervalMs;
     @Value("${t1.kafka.consumer.max-partition-fetch-bytes}")
     private String maxPartitionsFetchBytes;
     @Value("${t1.kafka.consumer.poll-timeout-ms}")
@@ -64,6 +66,7 @@ public class KafkaConfig {
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, Boolean.FALSE);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeoutMs);
+        props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, heartbeatIntervalMs);
         props.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, maxPartitionsFetchBytes);
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, maxPollRecords);
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, maxPollIntervalMs);
@@ -71,15 +74,8 @@ public class KafkaConfig {
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, ErrorHandlingDeserializer.class);
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, ErrorHandlingDeserializer.class);
-        DefaultKafkaConsumerFactory<String, TaskDto> factory = new DefaultKafkaConsumerFactory<String, TaskDto>(props);
+        DefaultKafkaConsumerFactory<String, TaskDto> factory = new DefaultKafkaConsumerFactory<>(props);
         factory.setKeyDeserializer(new StringDeserializer());
-        return factory;
-    }
-
-    @Bean
-    ConcurrentKafkaListenerContainerFactory<String, TaskDto> taskKafkaListenerContainerFactory(@Qualifier("taskKafkaConsumerListenerFactory") ConsumerFactory<String, TaskDto> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, TaskDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory);
         return factory;
     }
 
@@ -91,6 +87,13 @@ public class KafkaConfig {
         factory.getContainerProperties().setPollTimeout(pollTimeoutMs);
         factory.getContainerProperties().setMicrometerEnabled(true);
         factory.setCommonErrorHandler(errorHandler());
+    }
+
+    @Bean
+    ConcurrentKafkaListenerContainerFactory<String, TaskDto> taskKafkaListenerContainerFactory(@Qualifier("taskKafkaConsumerListenerFactory") ConsumerFactory<String, TaskDto> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, TaskDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factoryBuilder(consumerFactory, factory);
+        return factory;
     }
 
     private CommonErrorHandler errorHandler() {

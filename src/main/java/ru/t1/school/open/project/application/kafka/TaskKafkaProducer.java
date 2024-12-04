@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import ru.t1.school.open.project.api.dto.TaskDto;
 
-import java.util.UUID;
-
 public class TaskKafkaProducer {
     private static final Logger logger = LoggerFactory.getLogger(TaskKafkaProducer.class);
 
@@ -16,12 +14,15 @@ public class TaskKafkaProducer {
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void send(TaskDto dto) {
-        try {
-            kafkaTemplate.sendDefault(UUID.randomUUID().toString(), dto).get();
-            kafkaTemplate.flush();
-        } catch (Exception e) {
-            logger.error("Error sending message to Kafka", e);
-        }
+    public void send(TaskDto message) {
+        kafkaTemplate.sendDefault(message)
+                .whenComplete((result, ex) -> {
+                    if (ex == null) {
+                        logger.info("Published event to topic {}: value = {}", kafkaTemplate.getDefaultTopic(), message.toString());
+                    } else {
+                        logger.error("Error sending message to Kafka", ex);
+                        throw new RuntimeException("Caught an exception", ex);
+                    }
+                });
     }
 }

@@ -12,6 +12,7 @@ spring:
 
 logging:
   level:
+    root: info
     ru.t1.school.open.project: info
     org.apache.kafka.clients.consumer: info
 
@@ -35,3 +36,7 @@ t1:
       max-poll-interval-ms: 10000
     listener:
       poll-timeout: 100
+
+t1-starter:
+  logger:
+    level: SHORT

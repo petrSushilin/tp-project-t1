@@ -8,14 +8,15 @@
 #  "userId": 12345
 #}
 
-PUT /api/v1/tasks/302 HTTP/1.1
+
+PUT /api/v1/tasks/1452 HTTP/1.1
 Host: localhost:8080
 Content-Type: application/json
 
 {
-  "id": 302,
+  "id": 1452,
   "title": "Sample Title",
   "description": "new description",
-  "status": "IN_PROGRESS",
+  "status": "CLOSED",
   "userId": 12345
 }

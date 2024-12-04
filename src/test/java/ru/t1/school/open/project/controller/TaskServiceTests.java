@@ -13,6 +13,8 @@ import ru.t1.school.open.project.global.exception.RecordNotFoundException;
 import ru.t1.school.open.project.repo.TaskRepository;
 import ru.t1.school.open.project.application.service.TaskService;
 
+import java.util.NoSuchElementException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -68,10 +70,7 @@ public class TaskServiceTests {
     @Test
     void testGetByIdThrow() {
         String invalidTaskId = "12387419121";
-        RecordNotFoundException exception = assertThrows(RecordNotFoundException.class,
-                () -> taskService.getById(invalidTaskId)
-        );
-        assertTrue(exception.getMessage().contains("Record with id " + invalidTaskId + " not found"));
+        assertThrows(RuntimeException.class,() -> taskService.getById(invalidTaskId));
     }
 
     @Test

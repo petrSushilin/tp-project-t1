@@ -1,4 +1,4 @@
-package ru.t1.school.open.project.application.kafka.serialization;
+package ru.t1.school.open.project.application.serialization;
 
 import org.apache.kafka.common.header.Headers;
 import org.slf4j.Logger;

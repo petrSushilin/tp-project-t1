@@ -9,11 +9,8 @@ import ru.t1.school.open.project.api.dto.TaskDto;
 import ru.t1.school.open.project.application.util.mapper.TaskMapper;
 import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.domain.enums.TaskStatus;
-import ru.t1.school.open.project.global.exception.RecordNotFoundException;
 import ru.t1.school.open.project.repo.TaskRepository;
 import ru.t1.school.open.project.application.service.TaskService;
-
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -22,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class TaskServiceTests {
+class TaskServiceTests {
     @Autowired
     private TaskService taskService;
     @Autowired

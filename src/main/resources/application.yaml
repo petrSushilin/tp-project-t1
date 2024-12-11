@@ -12,13 +12,15 @@ spring:
 
 logging:
   level:
+    root: info
     ru.t1.school.open.project: info
+    org.apache.kafka.clients.consumer: info
 
 t1:
   root-path: ru.t1.school.open.project
   kafka:
     bootstrap:
-      servers: localhost:9092
+      servers: 127.0.0.1:29092
     topic:
       task: tp_project_t1_tasks
     producer:
@@ -26,10 +28,15 @@ t1:
     consumer:
       group-id: tp-project-t1
       session:
-        timeout-ms: 3500
-      max-partition-fetch-bytes: 3000000
-      poll-timeout-ms: 3500
+        timeout-ms: 30000
+      heartbeat-interval-ms: 10000
+      max-partition-fetch-bytes: 100000
+      poll-timeout-ms: 5000
       max-poll-records: 2
-      max-poll-interval-ms: 3500
-    listner:
-      poll-timeout: 10
+      max-poll-interval-ms: 10000
+    listener:
+      poll-timeout: 100
+
+t1-starter:
+  logger:
+    level: SHORT

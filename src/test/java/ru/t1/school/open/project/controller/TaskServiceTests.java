@@ -6,11 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.t1.school.open.project.api.dto.TaskDto;
+import ru.t1.school.open.project.api.dto.UserDto;
+import ru.t1.school.open.project.application.service.UserService;
 import ru.t1.school.open.project.application.util.mapper.TaskMapper;
 import ru.t1.school.open.project.domain.entity.Task;
 import ru.t1.school.open.project.domain.enums.TaskStatus;
+import ru.t1.school.open.project.domain.enums.UserRoles;
 import ru.t1.school.open.project.repo.TaskRepository;
 import ru.t1.school.open.project.application.service.TaskService;
+import ru.t1.school.open.project.repo.UserRepository;
+
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,14 +31,27 @@ class TaskServiceTests {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
+
     private TaskDto existingTask;
+    private UserDto existingUser;
+    private UserDto updatedUser;
 
     @BeforeEach
     void setUp() {
+        userRepository.deleteAll();
         taskRepository.deleteAll();
 
+        existingUser = userService
+                .create(new UserDto(0L, "user", "password", null));
+        updatedUser = userService
+                .create(new UserDto(0L, "user2", "password", null));
+
         existingTask = taskService
-                .create(new TaskDto( 0L,"Task#InitialTitle", "Initial Description", null, 1L));
+                .create(new TaskDto( 0L,"Task#InitialTitle", "Initial Description", null, existingUser.id()));
     }
 
     @Test
@@ -42,18 +61,18 @@ class TaskServiceTests {
         updatedTask.setTitle("Task#NewTitle");
         updatedTask.setDescription("New Description");
         updatedTask.setStatus(existingTask.status());
-        updatedTask.setUserId(2L);
+        updatedTask.setUserId(updatedUser.id());
 
         TaskDto changedTask = taskService
                 .change(String.valueOf(updatedTask.getId()), TaskMapper.toDto(updatedTask));
 
         assertNotNull(changedTask);
         assertEquals("Task#NewTitle", changedTask.title());
-        assertEquals(2L, changedTask.userId());
+        assertEquals(updatedUser.id(), changedTask.userId());
 
         TaskDto taskFromDb = taskService.getById(String.valueOf(existingTask.id()));
         assertEquals("Task#NewTitle", changedTask.title());
-        assertEquals(2L, taskFromDb.userId());
+        assertEquals(updatedUser.id(), taskFromDb.userId());
     }
 
     @Test
@@ -61,7 +80,7 @@ class TaskServiceTests {
         TaskDto taskFromDb = taskService.getById(String.valueOf(existingTask.id()));
         assertEquals("Task#InitialTitle", existingTask.title());
         assertTrue(existingTask.description().contains("Initial Description"));
-        assertEquals(1L, taskFromDb.userId());
+        assertEquals(existingUser.id(), taskFromDb.userId());
     }
 
     @Test
@@ -72,11 +91,11 @@ class TaskServiceTests {
 
     @Test
     void testCreation() {
-        TaskDto newTask = taskService.create(new TaskDto( 0L,"Task#NewTitle", "New Description", null, 2L));
+        TaskDto newTask = taskService.create(new TaskDto( 0L,"Task#NewTitle", "New Description", null, updatedUser.id()));
         assertEquals("Task#NewTitle", newTask.title());
         assertEquals("New Description", newTask.description());
         assertEquals(TaskStatus.CREATED, newTask.status());
-        assertEquals(2L, newTask.userId());
+        assertEquals(updatedUser.id(), newTask.userId());
     }
 
     @Test

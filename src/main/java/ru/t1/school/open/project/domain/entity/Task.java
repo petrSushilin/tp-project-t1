@@ -1,23 +1,28 @@
 package ru.t1.school.open.project.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 import ru.t1.school.open.project.domain.enums.TaskStatus;
 
 @Entity
 @Table(name = "tasks")
-public class Task {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+public class Task extends AbstractPersistable<Long> {
     @NotNull
     private String title;
+
     @NotNull
     private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;
+
     @NotNull
     private long userId;
 
@@ -29,23 +34,24 @@ public class Task {
     }
   
     public Task() {
-
     }
 
     public Task(long id, String title, String description, TaskStatus status, long userId) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         this.description = description;
         this.status = status;
         this.userId = userId;
     }
 
-    public long getId() {
-        return id;
+    @Override
+    public Long getId() {
+        return super.getId();
     }
 
-    public void setId(long id) {
-        this.id = id;
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
     }
 
     public String getTitle() {
@@ -83,7 +89,7 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +

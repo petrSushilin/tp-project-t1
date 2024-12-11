@@ -4,15 +4,22 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.data.jpa.domain.AbstractPersistable;
 import ru.t1.school.open.project.domain.enums.TaskStatus;
 
 @Entity
 @Table(name = "tasks")
-public class Task extends AbstractPersistable<Long> {
+public class Task {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id", updatable = false, nullable = false)
+    private Long id;
+
     @NotNull
     private String title;
 
@@ -24,7 +31,7 @@ public class Task extends AbstractPersistable<Long> {
     private TaskStatus status;
 
     @NotNull
-    private long userId;
+    private Long userId;
 
     @PrePersist
     public void prePersist() {
@@ -44,14 +51,12 @@ public class Task extends AbstractPersistable<Long> {
         this.userId = userId;
     }
 
-    @Override
     public Long getId() {
-        return super.getId();
+        return this.id;
     }
 
-    @Override
     public void setId(Long id) {
-        super.setId(id);
+        this.id = id;
     }
 
     public String getTitle() {

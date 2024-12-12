@@ -1,0 +1,11 @@
+<configuration>
+    <appender name="LIST" class="ch.qos.logback.core.read.ListAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ru.t1.school.open" level="DEBUG" additivity="false">
+        <appender-ref ref="LIST" />
+    </logger>
+</configuration>

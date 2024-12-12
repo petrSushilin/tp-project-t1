@@ -59,7 +59,6 @@ public class TaskService {
         return TaskMapper.toDto(savedEntity);
     }
 
-    @Logging
     private Task changeSaved(Task updatedTask) {
         Task savedTask = taskRepository.findById(updatedTask.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Task not found"));
@@ -72,8 +71,10 @@ public class TaskService {
         return savedTask;
     }
 
+
     @Logging
-    public void remove(@NonNull String id) {
+    public boolean remove(@NonNull String id) {
         taskRepository.deleteById(Long.parseLong(id));
+        return true;
     }
 }

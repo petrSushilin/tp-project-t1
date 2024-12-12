@@ -2,7 +2,7 @@ version: '1.0.0'
 
 services:
   postgres:
-    image: postgres
+    image: postgres:13.18
     container_name: tp_project_t1
     environment:
       POSTGRES_DB: postgres

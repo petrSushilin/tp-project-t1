@@ -26,7 +26,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
 import ru.t1.school.open.project.api.dto.TaskDto;
-import ru.t1.school.open.project.application.kafka.serialization.MassageDeserializer;
+import ru.t1.school.open.project.application.serialization.MassageDeserializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -106,6 +106,16 @@ public class KafkaConfig {
     }
 
     @Bean
+    public ProducerFactory<String, TaskDto> taskKafkaProducerFactory() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, false);
+        return new DefaultKafkaProducerFactory<>(props);
+    }
+
+    @Bean
     public KafkaTemplate<String, TaskDto> kafkaTemplate(ProducerFactory<String, TaskDto> producerFactory) {
         return new KafkaTemplate<>(producerFactory);
     }
@@ -115,15 +125,5 @@ public class KafkaConfig {
     public TaskKafkaProducer taskKafkaProducer(@Qualifier("kafkaTemplate") KafkaTemplate<String, TaskDto> kafkaTemplate) {
         kafkaTemplate.setDefaultTopic(taskTopic);
         return new TaskKafkaProducer(kafkaTemplate);
-    }
-
-    @Bean
-    public ProducerFactory<String, TaskDto> taskKafkaProducerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, false);
-        return new DefaultKafkaProducerFactory<>(props);
     }
 }

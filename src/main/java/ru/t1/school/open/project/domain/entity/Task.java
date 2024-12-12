@@ -1,6 +1,14 @@
 package ru.t1.school.open.project.domain.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import ru.t1.school.open.project.domain.enums.TaskStatus;
 
@@ -10,16 +18,20 @@ public class Task {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", updatable = false, nullable = false)
-    private long id;
+    private Long id;
+
     @NotNull
     private String title;
+
     @NotNull
     private String description;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TaskStatus status;
+
     @NotNull
-    private long userId;
+    private Long userId;
 
     @PrePersist
     public void prePersist() {
@@ -29,22 +41,21 @@ public class Task {
     }
   
     public Task() {
-
     }
 
     public Task(long id, String title, String description, TaskStatus status, long userId) {
-        this.id = id;
+        this.setId(id);
         this.title = title;
         this.description = description;
         this.status = status;
         this.userId = userId;
     }
 
-    public long getId() {
-        return id;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -83,7 +94,7 @@ public class Task {
     @Override
     public String toString() {
         return "Task{" +
-                "id=" + id +
+                "id=" + this.getId() +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
